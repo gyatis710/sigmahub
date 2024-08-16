@@ -27,7 +27,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 local MainTab = Window:CreateTab("Home", nil) -- Title, Image
-local MainSection = MainTab:CreateSection("Main")
+local MainSection = MainTab:CreateSection("Basic stuff")
 
 local Slider = MainTab:CreateSlider({
    Name = "WalkSpeed Slider",
@@ -64,9 +64,13 @@ local Input = MainTab:CreateInput({
 
 local OtherSection = MainTab:CreateSection("Autofarm")
 
-local Button = MainTab:CreateButton({
-   Name = "Noclip (use before autofarm)",
-   Callback = function()
+
+local Toggle = MainTab:CreateToggle({
+   Name = "Noclip (toggle on while using autofarm)",
+   CurrentValue = false,
+   Flag = "Toggle12", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+getgenv().NoclipEnabled = (Value)
    local Noclip = nil
 local Clip = nil
 
@@ -90,7 +94,13 @@ function clip()
 	Clip = true
 end
 
-noclip() -- to toggle noclip() and clip()
+if getgenv().NoclipEnabled == true then
+noclip()
+end
+
+if getgenv().NoclipEnabled == false then
+clip()
+end
    end,
 })
 
@@ -99,25 +109,42 @@ local Toggle = MainTab:CreateToggle({
    CurrentValue = false,
    Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
+
+   --anti afk script
+
+
    loadstring(game:HttpGet("https://raw.githubusercontent.com/KazeOnTop/Rice-Anti-Afk/main/Wind", true))()
+
+   -loop stuff
+
+
    getgenv().AutoFarmEnabled = (Value)
+   local PlayerName = player.Name
         while wait() do
         if getgenv().AutoFarmEnabled == true then
-            local hasball = workspace[(Text1)]:FindFirstChild('Ball')
+
+       --scoring stuff
+
+
+            local hasball = workspace[PlayerName]:FindFirstChild('Ball')
 if hasball then -- this checks if you have the ball
     local TS = game:GetService("TweenService")
     local tween1 = TS:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(0.1), {CFrame = CFrame.new(-458.461578, -93.0476532, -343.770172)})
-tween1:Play() -- teleports u to the goal
+   tween1:Play() -- teleports u to the goal
 else
+
+--takes the ball
+
+
 local rootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
 local descendants = workspace:GetChildren()
 for i,v in pairs(descendants) do
 if v:IsA("Model") and v.Name == "Ball" then
-rootPart.CFrame = v.Ball.CFrame
+rootPart.CFrame = v.Ball.CFrame -- tps to the ball if its on the ground
 end
 if v:FindFirstChild('Humanoid') and v:FindFirstChild('Ball') then
-rootPart.CFrame = v.Ball.Ball.CFrame
-game:GetService("VirtualInputManager"):SendKeyEvent(true,Enum.KeyCode.Q,false,game) 
+rootPart.CFrame = v.Ball.Ball.CFrame -- tps to the person wit ball
+game:GetService("VirtualInputManager"):SendKeyEvent(true,Enum.KeyCode.Q,false,game) -- auto tackle
 end
    end
    end
